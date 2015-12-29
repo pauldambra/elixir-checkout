@@ -11,24 +11,24 @@ defmodule Checkout do
 
   def total(checkout) do
     (for item <- checkout.basket,
-      do: getPrice item)
+      do: get_price item)
       |> Enum.sum
   end
 
-  defp getPrice({:A, amount}), do: getSpecialPrice(%{amount: 3, price: 130}, 50, amount, 0)
-  defp getPrice({:B, amount}), do: getSpecialPrice(%{amount: 2, price: 45}, 30, amount, 0)
-  defp getPrice({:C, amount}), do: getPrice(20, amount)
-  defp getPrice({:D, amount}), do: getPrice(15, amount)
+  defp get_price({:A, amount}), do: get_special_price(%{amount: 3, price: 130}, 50, amount, 0)
+  defp get_price({:B, amount}), do: get_special_price(%{amount: 2, price: 45}, 30, amount, 0)
+  defp get_price({:C, amount}), do: get_price(20, amount)
+  defp get_price({:D, amount}), do: get_price(15, amount)
 
-  defp getPrice(cost, amount) do
+  defp get_price(cost, amount) do
     cost * amount
   end
 
-  defp getSpecialPrice(offer, normal_cost, amount, current_total) do
+  defp get_special_price(offer, normal_cost, amount, current_total) do
     if amount >= offer.amount do
-        getSpecialPrice(offer, normal_cost, amount - offer.amount, current_total + offer.price)
+        get_special_price(offer, normal_cost, amount - offer.amount, current_total + offer.price)
     else # amount is now either less than the offer anmount or 0
-        current_total + getPrice(normal_cost, amount)
+        current_total + get_price(normal_cost, amount)
     end
   end
 end
