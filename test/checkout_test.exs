@@ -36,7 +36,7 @@ defmodule CheckoutTest do
     assert Checkout.total(checkout) == 50
   end
 
-  test "scanning a basket gives expected total cost", %{data: scans} do
+  test "scanning a basket gives expected total price", %{data: scans} do
     Enum.each(scans,
               fn(scan) ->
                 total = Enum.reduce(
