@@ -10,25 +10,20 @@ defmodule Checkout do
   end
 
   def total(checkout) do
-    (for item <- checkout.basket,
-      do: get_price item)
-      |> Enum.sum
+    Enum.reduce(checkout.basket, 0, fn(basket_item, acc) ->
+      {sku, quantity} = basket_item
+      acc + get_price(sku, quantity)
+    end)
   end
 
-  defp get_price({:A, amount}), do: get_special_price(%{amount: 3, price: 130}, 50, amount, 0)
-  defp get_price({:B, amount}), do: get_special_price(%{amount: 2, price: 45}, 30, amount, 0)
-  defp get_price({:C, amount}), do: get_price(20, amount)
-  defp get_price({:D, amount}), do: get_price(15, amount)
+  def calculate_discount(discount, discountMultiple, quantity),
+    do: trunc(quantity / discountMultiple) * discount
 
-  defp get_price(cost, amount) do
-    cost * amount
-  end
+  defp discount_for(:A, quantity), do: calculate_discount(20.00, 3, quantity)
+  defp discount_for(:B, quantity), do: calculate_discount(15.00, 2, quantity)
+  defp discount_for(_, _),  do:  0.00
 
-  defp get_special_price(offer, normal_cost, amount, current_total) do
-    if amount >= offer.amount do
-        get_special_price(offer, normal_cost, amount - offer.amount, current_total + offer.price)
-    else # amount is now either less than the offer anmount or 0
-        current_total + get_price(normal_cost, amount)
-    end
-  end
+  defp price_of(sku), do: %{A: 50, B: 30, C: 20, D: 15}[sku]
+  defp get_price(sku, quantity),
+    do: price_of(sku) * quantity - discount_for(sku, quantity)
 end
